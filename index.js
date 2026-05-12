@@ -111,8 +111,27 @@ function initCanvas() {
 }
 
 // Theme Toggle Functionality
-const themeToggle = document.getElementById('themeToggle');
-const themeIcon = themeToggle.querySelector('i');
+const themeToggle = document.getElementById("theme-toggle");
+
+themeToggle.addEventListener("click", () => {
+    document.body.classList.toggle("light-theme");
+
+    // Save theme
+    if (document.body.classList.contains("light-theme")) {
+        localStorage.setItem("theme", "light");
+    } else {
+        localStorage.setItem("theme", "dark");
+    }
+});
+
+// Load saved theme
+window.addEventListener("load", () => {
+    const savedTheme = localStorage.getItem("theme");
+
+    if (savedTheme === "light") {
+        document.body.classList.add("light-theme");
+    }
+});
 
 // Check for saved theme preference or default to dark mode
 const currentTheme = window.theme || 'dark';

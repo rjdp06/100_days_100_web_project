@@ -5,7 +5,7 @@
     --text-light: #333;
     --card-light: #ffffff;
     --shadow-light: rgba(0, 0, 0, 0.1);
-    
+
     --background-dark: #1a1a1a;
     --text-dark: #f0f0f0;
     --card-dark: #2a2a2a;
@@ -36,9 +36,22 @@ body.dark-mode {
 }
 
 .container {
-    max-width: 600px;
+    max-width: 1100px;
     width: 100%;
-    text-align: center;
+    margin: 0 auto;
+}
+
+.split-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    align-items: start;
+}
+
+.panel {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
 }
 
 .card {
@@ -67,11 +80,14 @@ body.dark-mode {
     margin-bottom: 1.5rem;
 }
 
-.input-section, .qr-options {
+.input-section,
+.qr-options {
     margin-bottom: 1rem;
 }
 
-input[type="text"], input[type="password"], select {
+input[type="text"],
+input[type="password"],
+select {
     width: 100%;
     padding: 10px;
     margin-bottom: 10px;
@@ -105,9 +121,9 @@ button:active {
 }
 
 .result-card {
-    display: flex; 
-    flex-direction: column; 
-    align-items: center; 
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     justify-content: center;
 }
 
@@ -154,6 +170,7 @@ button:active {
     border: none;
     border-radius: 3px;
 }
+
 #toggle-theme {
     background-color: var(--secondary-color);
     color: var(--text-light);
@@ -165,21 +182,64 @@ button:active {
 }
 
 @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .card {
     animation: fadeIn 0.5s ease-out;
 }
 
-@media only screen and (max-width: 600px) {
+@media only screen and (max-width: 860px) {
+
+    .split-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .panel-right {
+        order: -1;
+    }
+
     .container {
         padding: 10px;
     }
-    
+}
+
+@media only screen and (max-width: 600px) {
+
+    body {
+        padding: 12px;
+    }
+
+    .card {
+        padding: 16px;
+    }
+
+    .head {
+        font-size: 1.5rem;
+    }
+
     .option {
         flex-basis: 100%;
+    }
+
+    .qr-actions {
+        flex-direction: column;
+    }
+
+    .qr-actions button {
+        max-width: 100%;
+    }
+
+    #qrcode img {
+        max-width: 160px;
     }
 }
 

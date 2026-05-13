@@ -1,4 +1,5 @@
 const qrType = document.getElementById('qr-type');
+const themeBtns = document.querySelectorAll('.theme-btn');
 const inputText = document.getElementById('inputtext');
 const wifiInputs = document.getElementById('wifi-inputs');
 const vcardInputs = document.getElementById('vcard-inputs');
@@ -16,6 +17,25 @@ const toggleThemeBtn = document.getElementById('toggle-theme');
 
 let qrcode = null;
 let realtimeTimer = null;
+
+const themeColors = {
+    aurora: '#a78bfa',
+    neon:   '#00ff88',
+    dark:   '#1a1a1a',
+    candy:  '#e91e8c'
+};
+
+let activeThemeColor = '#a78bfa'; // default aurora
+
+themeBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+        const theme = btn.dataset.theme;
+        activeThemeColor = themeColors[theme];
+        themeBtns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        generateQRCode(); // re-renders QR with new color only
+    });
+});
 function updateInputFields() {
     const selectedType = qrType.value;
     inputText.style.display = selectedType === 'text' || selectedType === 'url' ? 'block' : 'none';
@@ -62,14 +82,14 @@ function generateQRCode() {
     }
 
     if (data) {
-        qrcode = new QRCode(qrcodeDiv, {
-            text: data,
-            width: 200,
-            height: 200,
-            colorDark: qrColor.value,
-            colorLight: "#ffffff",
-            correctLevel: QRCode.CorrectLevel[errorCorrection.value]
-        });
+qrcode = new QRCode(qrcodeDiv, {
+    text: data,
+    width: 200,
+    height: 200,
+    colorDark: activeThemeColor || qrColor.value,
+    colorLight: "#ffffff",
+    correctLevel: QRCode.CorrectLevel[errorCorrection.value]
+});
 
         applyQRCodeStyle();
         addLogoToQRCode();

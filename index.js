@@ -225,7 +225,7 @@ function fillTable() {
         ["Day 31", "Password Manager", "./public/password%20manager/index.html"],
         ["DAY-32", "Missionaries & Cannibals", "./public/Missionaries&Cannibals/index.html"],
         ["Day 33", "Weather Forcasting", "./public/Weather%20Forcasting/index.html"],
-        ["Day 34", "Email Validator", "./public/email%20validator/index.html"],
+        ["Day 34", "Email Validator", "./public/email_validator/index.html"],
         ["Day 35", "Vanilla-JavaScript-Calculator", "./public/Vanilla-JavaScript-Calculator-master/index.html"],
         ["Day 36", "Medical App", "./public/Medical_App/index.html"],
         ["Day 37", "2048 Game", "./public/2048_game/index.html"],

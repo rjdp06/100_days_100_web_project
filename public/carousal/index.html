@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="stylesheet" href="./index.css" />
+  <link rel="stylesheet" href="./style.css" />
   <link rel="icon" href="../favv.png" type="image/x-icon" />
   <title>Solar System Carousel</title>
 </head>
@@ -20,15 +20,15 @@
           </div>
 
           <div class="planet-mini-list">
-            <img src="./images/sun-image.png" alt="Sun" class="mini-planet">
-            <img src="./images/mercury-image.png" alt="Mercury" class="mini-planet">
-            <img src="./images/venus-image.png" alt="Venus" class="mini-planet">
-            <img src="./images/earth-image.png" alt="Earth" class="mini-planet">
-            <img src="./images/mars-image.png" alt="Mars" class="mini-planet">
-            <img src="./images/jupiter-image.png" alt="Jupiter" class="mini-planet">
-            <img src="./images/saturn-image.png" alt="Saturn" class="mini-planet">
-            <img src="./images/Uranus.png" alt="Uranus" class="mini-planet">
-            <img src="./images/Neptune.png" alt="Neptune" class="mini-planet">
+            <img src="./images/sun-image.png" alt="Sun" class="mini-planet" data-index="0">
+            <img src="./images/mercury-image.png" alt="Mercury" class="mini-planet" data-index="1">
+            <img src="./images/venus-image.png" alt="Venus" class="mini-planet" data-index="2">
+            <img src="./images/earth-image.png" alt="Earth" class="mini-planet" data-index="3">
+            <img src="./images/mars-image.png" alt="Mars" class="mini-planet" data-index="4">
+            <img src="./images/jupiter-image.png" alt="Jupiter" class="mini-planet" data-index="5">
+            <img src="./images/saturn-image.png" alt="Saturn" class="mini-planet" data-index="6">
+            <img src="./images/Uranus.png" alt="Uranus" class="mini-planet" data-index="7">
+            <img src="./images/Neptune.png" alt="Neptune" class="mini-planet" data-index="8">
           </div>
         </div>
       </div>
@@ -36,7 +36,7 @@
 
     <div class="slider">
       <section class="slide active" data-planet="sun">
-        <div class="bg-layer" style="background-image: url('./images/sun-bg.jpg');"></div>
+        <!-- <div class="bg-layer" style="background-image: url('./images/sun-image.png');"></div> -->
         
         <div class="content-wrapper">
           <div class="left-col">
@@ -69,7 +69,7 @@
         </div>
       </section>
       <section class="slide" data-planet="mercury">
-        <div class="bg-layer" style="background-image: url('./images/mercury-bg.jpg');"></div>
+        <!-- <div class="bg-layer" style="background-image: url('./images/mercury-image.png');"></div> -->
         
         <div class="content-wrapper">
           <div class="left-col">
@@ -102,7 +102,7 @@
         </div>
       </section>
       <section class="slide" data-planet="venus">
-        <div class="bg-layer" style="background-image: url('./images/venus-bg.jpg');"></div>
+        <!-- <div class="bg-layer" style="background-image: url('./images/venus-image.png');"></div> -->
         
         <div class="content-wrapper">
           <div class="left-col">
@@ -135,7 +135,7 @@
         </div>
       </section>
       <section class="slide" data-planet="earth">
-        <div class="bg-layer" style="background-image: url('./images/earth-bg.jpg');"></div>
+        <!-- <div class="bg-layer" style="background-image: url('./images/earth-image.png');"></div> -->
         
         <div class="content-wrapper">
           <div class="left-col">
@@ -168,7 +168,7 @@
         </div>
       </section>
       <section class="slide" data-planet="mars">
-        <div class="bg-layer" style="background-image: url('./images/mars-bg.jpg');"></div>
+        <!-- <div class="bg-layer" style="background-image: url('./images/mars-image.png');"></div> -->
         
         <div class="content-wrapper">
           <div class="left-col">
@@ -201,7 +201,7 @@
         </div>
       </section>
       <section class="slide" data-planet="jupiter">
-        <div class="bg-layer" style="background-image: url('./images/jupiter-bg.jpg');"></div>
+        <!-- <div class="bg-layer" style="background-image: url('./images/jupiter-image.png');"></div> -->
         
         <div class="content-wrapper">
           <div class="left-col">
@@ -234,7 +234,7 @@
         </div>
       </section>
       <section class="slide" data-planet="saturn">
-        <div class="bg-layer" style="background-image: url('./images/saturn-bg.jpg');"></div>
+        <!-- <div class="bg-layer" style="background-image: url('./images/saturn-image.png');"></div> -->
         
         <div class="content-wrapper">
           <div class="left-col">
@@ -267,7 +267,7 @@
         </div>
       </section>
       <section class="slide" data-planet="Uranus">
-        <div class="bg-layer" style="background-image: url('./images/uranus-bg.jpg');"></div>
+        <!-- <div class="bg-layer" style="background-image: url('./images/Uranus.png');"></div> -->
         
         <div class="content-wrapper">
           <div class="left-col">
@@ -301,7 +301,7 @@
       </section>
       
       <section class="slide" data-planet="neptune">
-        <div class="bg-layer" style="background-image: url('./images/neptune-bg.jpg');"></div>
+        <!-- <div class="bg-layer" style="background-image: url('./images/Neptune.png');"></div> -->
         
         <div class="content-wrapper">
           <div class="left-col">
@@ -343,6 +343,6 @@
     </div>
   </div>
 
-  <script src="./index.js"></script>
+  <script src="./script.js"></script>
 </body>
 </html>

@@ -1,3 +1,5 @@
+const copyBtn = document.getElementById('copy-btn');
+const message = document.getElementById('message');
 const qrType = document.getElementById('qr-type');
 const inputText = document.getElementById('inputtext');
 const wifiInputs = document.getElementById('wifi-inputs');
@@ -27,12 +29,16 @@ qrType.addEventListener('change', updateInputFields);
 
 function generateQRCode() {
     qrcodeDiv.innerHTML = '';
+    if (!inputText.value) {
+    message.innerText = "Please enter valid input ❌";
+    return;
+}
+message.innerText = "QR Code Generated Successfully ✅";
     // 🛑 INPUT VALIDATION 
 if (
     (qrType.value === 'text' || qrType.value === 'url') &&
     inputText.value.trim() === ''
 ) {
-    alert("Please enter some text or URL");
     return;
 }
 
@@ -193,3 +199,11 @@ toggleThemeBtn.addEventListener('click', function() {
 });
 
 updateInputFields();
+copyBtn.addEventListener('click', () => {
+    if (!inputText.value) {
+        message.innerText = "Please enter valid input ❌";
+        return;
+    }
+    navigator.clipboard.writeText(inputText.value);
+    message.innerText = "Copied to clipboard ✅";
+});

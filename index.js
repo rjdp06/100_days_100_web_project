@@ -982,6 +982,7 @@ function toggleBookmark(project) {
 
   renderBookmarks();
   renderGrid();
+  renderRecentProjects();
 }
 
 function trackRecentProject(project) {
@@ -1089,38 +1090,41 @@ function renderRecentProjects() {
       .split(' ')
       .map((tag) => `<span class="tag">${tag}</span>`)
       .join('');
-
+    const isBookmarked = bookmarkedProjects.some((item) => item[0] === day);
     card.innerHTML = `
-            <div class="card-meta">
-                <span class="card-day">${day}</span>
+    <div class="card-meta">
+        <span class="card-day">${day}</span>
 
-                <span class="card-category">
-                    ${CATEGORY_LABEL[cat]}
-                </span>
-            </div>
+        <span class="card-category">
+            ${CATEGORY_LABEL[cat]}
+        </span>
+    </div>
 
-            <div class="card-name">${name}</div>
+    <div class="card-name">${name}</div>
 
-            <div class="card-tags">
-                ${tagsHTML}
-            </div>
+    <div class="card-tags">
+        ${tagsHTML}
+    </div>
 
-            <div class="card-footer">
-                <a href="${url}"
-                   target="_blank"
-                   class="card-link">
+    <div class="card-footer">
 
-                    View Demo
-                    <i class="fas fa-arrow-right"></i>
-                </a>
-                  <button class="bookmark-btn active"
-            data-id="${day}">
+        <a href="${url}"
+           target="_blank"
+           class="card-link open-project"
+           data-id="${day}">
 
-        <i class="fa-solid fa-bookmark"></i>
-    </button>
-            </div>
-        `;
+            View Demo
+            <i class="fas fa-arrow-right"></i>
+        </a>
 
+        <button class="bookmark-btn ${isBookmarked ? 'active' : ''}"
+                data-id="${day}">
+
+            <i class="${isBookmarked ? 'fa-solid' : 'fa-regular'} fa-bookmark"></i>
+        </button>
+
+    </div>
+`;
     recentGrid.appendChild(card);
   });
 }

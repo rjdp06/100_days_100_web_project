@@ -131,6 +131,7 @@ const PROJECTS = [
     ["Day 115", "Event Registration System",           "https://event-registration-system-w10a.onrender.com/",                                                           ["Node","Express"],        "tool"],
     ["Day 116", "AI Image Classifier",                 "./public/AI Image Classifier/index.html",                                                                        ["HTML","CSS","JS","AI"], "tool"],
     ["Day 117", "Habit Tracker Web App",               "./public/Habit-Tracker-Web-App/index.html",                                                                      ["HTML","CSS","JS"],       "tool"],
+    ["Day 119", "Virtual Playground",                  "./playground.html",                                                                                              ["HTML","CSS","JS"],       "tool"],
 
 
 let currentPage = 1;

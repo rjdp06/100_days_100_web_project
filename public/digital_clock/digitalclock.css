@@ -305,7 +305,7 @@ select:focus {
 .theme-buttons {
 
   display: flex;
-  gap: 15px;
+  gap: 22px;   /* more spacing */
 
   justify-content: center;
 
@@ -316,11 +316,13 @@ select:focus {
 
   border: none;
 
-  padding: 14px 24px;
+  padding: 18px 36px;   /* bigger button */
 
-  border-radius: 16px;
+  min-width: 150px;     /* equal width */
 
-  font-size: 15px;
+  border-radius: 18px;
+
+  font-size: 18px;      /* bigger text */
   font-weight: 600;
 
   cursor: pointer;
@@ -380,11 +382,11 @@ select:focus {
 select,
 input[type="time"] {
 
-  width: 280px;
+  width: 340px;          /* bigger width */
 
-  padding: 14px 18px;
+  padding: 18px 22px;   /* bigger height */
 
-  border-radius: 16px;
+  border-radius: 18px;
 
   border: 1px solid rgba(255,255,255,0.1);
 
@@ -394,7 +396,9 @@ input[type="time"] {
 
   outline: none;
 
-  font-size: 15px;
+  font-size: 17px;      /* bigger text */
+
+  font-weight: 500;
 }
 
 .alarm-section {
@@ -414,11 +418,11 @@ input[type="time"] {
 
   border: none;
 
-  padding: 14px 22px;
+  padding: 18px 34px;   /* bigger buttons */
 
-  border-radius: 16px;
+  border-radius: 18px;
 
-  font-size: 15px;
+  font-size: 17px;      /* bigger text */
   font-weight: 600;
 
   cursor: pointer;
@@ -1002,10 +1006,6 @@ input[type="time"] {
   }
 }
 
-/* =========================================
-   SHORTER & BALANCED FONT SIZE
-========================================= */
-
 .classic-clock #day-name,
 .modern-clock #day-name,
 .future-clock #day-name {
@@ -1096,10 +1096,6 @@ input[type="time"] {
   opacity: 0.9;
 }
 
-
-/* =========================================
-   MOBILE
-========================================= */
 
 @media (max-width: 768px) {
 

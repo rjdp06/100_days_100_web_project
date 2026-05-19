@@ -45,7 +45,7 @@ jobs:
           end_marker = "<!-- readme: contributors -end -->"
           columns_per_row = 6
           commits_per_page = 100
-          max_commit_pages = 10
+          max_commit_pages = 50
 
           content = readme_path.read_text(encoding="utf-8")
           section_match = re.search(
@@ -107,7 +107,9 @@ jobs:
                   break
 
               for commit_item in payload:
-                  author = commit_item.get("author") or {}
+                  author = commit_item.get("author")
+                  if not author:
+                      continue
                   username = author.get("login")
                   if username not in usernames or username in latest_by_username:
                       continue
@@ -126,6 +128,8 @@ jobs:
                       continue
                   latest_by_username[username] = parsed_date.timestamp()
                   remaining_usernames.discard(username)
+                  if not remaining_usernames:
+                      break
 
               if len(payload) < commits_per_page:
                   break

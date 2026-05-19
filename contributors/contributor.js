@@ -1,57 +1,40 @@
-const modal =
-document.getElementById("profileModal");
+const modal = document.getElementById('profileModal');
 
-const modalBody =
-document.getElementById("modalBody");
+const modalBody = document.getElementById('modalBody');
 
-const closeModal =
-document.getElementById("closeModal");
-
+const closeModal = document.getElementById('closeModal');
 
 closeModal?.addEventListener(
-"click",
+  'click',
 
-()=>{
-
-modal.style.display =
-"none";
-
-});
-
+  () => {
+    modal.style.display = 'none';
+  }
+);
 
 window.addEventListener(
-"click",
+  'click',
 
-(e)=>{
-
-if(e.target===modal){
-
-modal.style.display=
-"none";
-
-}
-
-});
+  (e) => {
+    if (e.target === modal) {
+      modal.style.display = 'none';
+    }
+  }
+);
 
 async function openProfile(username) {
+  modal.style.display = 'flex';
 
-    modal.style.display = "flex";
-
-    modalBody.innerHTML = `
+  modalBody.innerHTML = `
         <p>Loading profile...</p>
     `;
 
-    try {
+  try {
+    const response = await fetch(`https://api.github.com/users/${username}`);
 
-        const response =
-        await fetch(
-            `https://api.github.com/users/${username}`
-        );
+    const user = await response.json();
 
-        const user =
-        await response.json();
-
-        modalBody.innerHTML = `
+    modalBody.innerHTML = `
 
             <img
             src="${user.avatar_url}"
@@ -62,7 +45,7 @@ async function openProfile(username) {
             </h2>
 
             <p>
-            ${user.bio || "This contributor has not added a bio yet."}
+            ${user.bio || 'This contributor has not added a bio yet.'}
             </p>
 
             <p>
@@ -77,14 +60,12 @@ async function openProfile(username) {
 
             <p>
             Location:
-            ${user.location || "Not available"}
+            ${user.location || 'Not available'}
             </p>
 
             <p>
             Joined:
-            ${new Date(
-                user.created_at
-            ).toLocaleDateString()}
+            ${new Date(user.created_at).toLocaleDateString()}
             </p>
 
             <div class="popup-btn-container">
@@ -102,18 +83,11 @@ async function openProfile(username) {
             </div>
 
         `;
+  } catch (error) {
+    modalBody.innerHTML = '<p>Failed to load profile</p>';
 
-    }
-
-    catch(error){
-
-        modalBody.innerHTML =
-        "<p>Failed to load profile</p>";
-
-        console.error(error);
-
-    }
-
+    console.error(error);
+  }
 }
 // Use global REPO_OWNER and REPO_NAME defined in index.js
 
@@ -201,21 +175,43 @@ function renderContributors(data) {
 
             </div>
 
-            <div class="contributor-links">
+           <div class="contributor-links">
 
-                <a href="${contributor.html_url}"
-                   target="_blank"
-                   class="github-btn">
+    <button
+        class="details-btn"
+        data-user="${contributor.login}"
+    >
 
-                    <i class="fab fa-github"></i>
-                    Profile
+        View Details
 
-                </a>
+    </button>
 
-            </div>
+    <a
+        href="${contributor.html_url}"
+        target="_blank"
+        class="github-btn"
+    >
+
+        <i class="fab fa-github"></i>
+        Profile
+
+    </a>
+
+</div>
         `;
 
     fragment.appendChild(card);
+    const detailsButton = card.querySelector('.details-btn');
+
+    if (detailsButton) {
+      detailsButton.addEventListener(
+        'click',
+
+        () => {
+          openProfile(contributor.login);
+        }
+      );
+    }
   });
 
   contributorsContainer.appendChild(fragment);

@@ -69,25 +69,29 @@ h3 {
   justify-content: center;
   align-items: center;
   gap: 20px;
-  flex-wrap: wrap;
   margin-top: 25px;
-  padding: 18px 25px;
+  flex-wrap: wrap;
 }
 
-.toggle-group {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  background: rgba(255, 255, 255, 0.7);
-  padding: 10px 16px;
-  border-radius: 14px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
-  backdrop-filter: blur(8px);
+.theme-toggle-wrapper {
+  position: absolute;
+  top: 20px;
+  right: 25px;
 }
 
-.toggle-label {
-  font-size: 0.95rem;
-  font-weight: 500;
+.theme-switch input {
+  display: none;
+}
+
+.theme-icon {
+  font-size: 2rem;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+  display: inline-block;
+}
+
+.theme-icon:hover {
+  transform: rotate(15deg) scale(1.1);
 }
 
 .switch {
@@ -142,21 +146,6 @@ body.dark h3 {
   color: #cbd5e1;
 }
 
-body.dark .toggle-group {
-  background: rgba(30, 41, 59, 0.9);
-  color: #f8fafc;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-}
-
-body.dark #start-btn {
-  background: #f8fafc;
-  color: #111827;
-}
-
-body.dark #start-btn:hover {
-  background: #e2e8f0;
-}
-
 body.dark .btn.red {
   background-color: #ff6b6b;
 }
@@ -173,6 +162,7 @@ body.dark .btn.purple {
   background-color: #b784ff;
 }
 
+
 @media (max-width: 600px) {
 
   h1 {
@@ -188,10 +178,5 @@ body.dark .btn.purple {
     width: 95px;
     height: 95px;
     margin: 8px;
-  }
-
-  .toggle-group {
-    width: 220px;
-    justify-content: space-between;
   }
 }

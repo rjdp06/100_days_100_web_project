@@ -835,21 +835,6 @@ document.addEventListener('DOMContentLoaded', () => {
   initScrollBtn();
 });
 
-document.addEventListener('DOMContentLoaded', () => {
-  console.log('DOMContentLoaded fired');
-  console.log('PROJECTS:', typeof PROJECTS, PROJECTS ? PROJECTS.length : 'undefined');
-  initTheme();
-  updateNavbar();
-  initFilterChips();
-  initSearch();
-  syncProjectCounts();
-  renderGrid();
-  renderBookmarks();
-  renderRecentProjects();
-  fetchRepoStats();
-  initScrollBtn();
-});
-
 // Re-render the grid when the browser window is resized to adapt pagination density instantly
 window.addEventListener('resize', () => {
   renderGrid();

@@ -1,5 +1,6 @@
 # Retro Highway Racer
 
+## Description
 An endless 2D highway racing game featuring an interactive dashboard console, smooth parallax environments, and responsive mechanics built entirely with vanilla frontend technologies.
 
 ## Features
@@ -9,13 +10,19 @@ An endless 2D highway racing game featuring an interactive dashboard console, sm
 - **Unified Arcade UI/UX:** A structured racing slate and gold console theme optimized across mobile, tablet, and desktop breakpoints.
 
 ## Technologies Used
-- HTML
-- CSS
-- JavaScript
+- HTML5
+- CSS3
+- JavaScript ES6
 
-## How to Run
-1. Open index.html in a web browser
-2. Enjoy the project!
+## Installation/Setup
+1. Fork this repository.
+2. Clone the repository locally: `git clone https://github.com/poorvi-2026/100_days_100_web_project.git`
+3. Navigate to the project directory: `cd 100_days_100_web_project/public/RetroHighwayRacer/`
+
+## Usage
+1. Open the `index.html` file directly in any modern web browser (or run via VS Code Live Server).
+2. Use the **Left/Right Arrow Keys** or **A/D Keys** on desktop to steer your car and dodge incoming obstacles.
+3. On mobile devices, use the on-screen left and right steering buttons.
 
 ## Screenshots
 
@@ -26,6 +33,12 @@ An endless 2D highway racing game featuring an interactive dashboard console, sm
 | Paused Screen | Game Over |
 | :---: | :---: |
 | ![Paused](images/paused.png) | ![Crashed](images/crashed.png) |
+
+## Contributing
+Contributions are welcome! Please follow the root repository's `CONTRIBUTING.md` guidelines for submitting pull requests.
+
+## License
+MIT License
 
 ## Author
 Poorvi Parashar

@@ -1,6 +1,7 @@
-h1,h2{
-    color:#eeebe2;
-    font-weight: 400;
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
 /* ===== Weather App UI Fix ===== */
@@ -58,6 +59,21 @@ h1,h2{
     }
 }
 
+@keyframes spin {
+    100% {
+        transform: rotate(360deg);
+    }
+}
 
+  .table-responsive {
+    font-size: 12px;
+  }
 
+  .navbar-brand {
+    font-size: 18px;
+  }
 
+  .container {
+    padding: 10px;
+  }
+}

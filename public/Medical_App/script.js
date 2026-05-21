@@ -6,15 +6,38 @@ document.addEventListener('DOMContentLoaded', () => {
     const loading = document.getElementById('loading');
     const specialistResponseSection = document.getElementById('specialist-response');
     const historyList = document.getElementById('historyList');
-    const specialistSearch = document.getElementById('specialistSearch');
+    
     const specialistTypeSelect = document.getElementById('specialistType');
 
     const specialists = ['Allergist/Immunologist', 'Anesthesiologist', 'Cardiologist', 'Dermatologist', 'Endocrinologist', 'Gastroenterologist', 'Hematologist', 'Nephrologist', 'Neurologist', 'Oncologist', 'Ophthalmologist', 'Otolaryngologist (ENT)', 'Pediatrician', 'Psychiatrist', 'Pulmonologist', 'Rheumatologist', 'Urologist', 'Cardiothoracic Surgeon', 'General Surgeon', 'Neurosurgeon', 'Orthopedic Surgeon', 'Plastic Surgeon', 'Vascular Surgeon', 'Family Medicine Physician', 'General Practitioner (GP)', 'Internal Medicine Physician (Internist)'];
     const consultationHistory = [];
 
-    function updateSpecialistOptions(searchText) {
+
+    function showToast(message, type = 'info') {
+    const container = document.getElementById('toast-container');
+
+    const toast = document.createElement('div');
+    toast.className = `toast ${type}`;
+
+    toast.innerHTML = `
+        <span>${message}</span>
+        <button>&times;</button>
+    `;
+
+    toast.querySelector('button').onclick = () => {
+        toast.remove();
+    };
+
+    container.appendChild(toast);
+
+    setTimeout(() => {
+        toast.remove();
+    }, 3000);
+}
+
+    function updateSpecialistOptions() {
         specialistTypeSelect.innerHTML = '';
-        const filteredSpecialists = specialists.filter(specialist => specialist.toLowerCase().includes(searchText.toLowerCase()));
+        const filteredSpecialists = specialists;
         filteredSpecialists.forEach(specialist => {
             const option = document.createElement('option');
             option.value = specialist;
@@ -40,11 +63,9 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    specialistSearch.addEventListener('input', (event) => {
-        updateSpecialistOptions(event.target.value);
-    });
 
-    updateSpecialistOptions('');
+
+    updateSpecialistOptions();
 
     requestForm.addEventListener('submit', function(event) {
         event.preventDefault();
@@ -73,6 +94,7 @@ document.addEventListener('DOMContentLoaded', () => {
             Specialist type: ${specialistType}.`;
             specialistResponseSection.style.display = 'block';
             requestForm.reset();
+            showToast("Consultation request submitted!", "success");
         }, 2000);
     });
 
@@ -86,7 +108,11 @@ document.addEventListener('DOMContentLoaded', () => {
             historyItem.status = 'Completed';
             historyItem.notes = suggestion;
             renderHistory();
+            showToast("Suggestion submitted successfully!", "info");
         }
+        else {
+    showToast("Consultation ID not found!", "error");
+}
 
         statusMessage.innerHTML = `Suggestion submitted for Consultation ID <strong>${consultationId}</strong>:${suggestion}`;
         responseForm.reset();
@@ -98,5 +124,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
         statusMessage.textContent = `Feedback received: ${feedbackMessage}`;
         feedbackForm.reset();
+        showToast("Feedback submitted successfully!", "success");
     });
 });

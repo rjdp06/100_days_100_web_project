@@ -388,7 +388,7 @@ async function fetchRepoStats() {
 
     const setNumber = (id, val) => {
       const el = document.getElementById(id);
-      if (!el || typeof val !== 'number' || !Number.isFinite(val)) return;
+      if (!el || !Number.isFinite(val)) return;
       el.textContent = val.toLocaleString();
     };
 
@@ -404,7 +404,9 @@ async function fetchRepoStats() {
       setNumber('prCount', prs.total_count);
     }
 
-    if (!repo && !prs) throw new Error('Stats fetch failed');
+    if (!repo && !prs) {
+      console.warn('GitHub stats unavailable: Stats fetch failed');
+    }
   } catch (e) {
     console.warn('GitHub stats unavailable:', e.message);
   }

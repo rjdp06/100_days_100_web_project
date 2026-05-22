@@ -458,6 +458,7 @@ function generateReadme() {
    ============================================================ */
 let activeFilter = 'all';
 let searchQuery = '';
+let sortOption = 'default';
 
 function renderGrid() {
   const grid = document.getElementById('projectGrid');
@@ -478,6 +479,32 @@ function renderGrid() {
 
     return matchesFilter && matchesSearch && matchesTech;
   });
+  if (sortOption === 'az') {
+  filtered.sort((a, b) => a[1].localeCompare(b[1]));
+}
+
+if (sortOption === 'latest') {
+  filtered.sort((a, b) => {
+    const dayA = parseInt(a[0].replace('Day ', ''));
+    const dayB = parseInt(b[0].replace('Day ', ''));
+    return dayB - dayA;
+  });
+}
+
+if (sortOption === 'difficulty') {
+  const difficultyOrder = {
+    beginner: 1,
+    intermediate: 2,
+    advanced: 3
+  };
+
+  filtered.sort((a, b) => {
+    return (
+      difficultyOrder[a[4].toLowerCase()] -
+      difficultyOrder[b[4].toLowerCase()]
+    );
+  });
+}
 
   grid.innerHTML = '';
 
@@ -905,7 +932,17 @@ function initSearch() {
     renderGrid();
   });
 }
+function initSorting() {
+  const sortSelect = document.getElementById('sortProjects');
 
+  if (!sortSelect) return;
+
+  sortSelect.addEventListener('change', (e) => {
+    sortOption = e.target.value;
+    currentPage = 1;
+    renderGrid();
+  });
+}
 /* ============================================================
    TECH STACK SEARCH INITIALIZATION
    ============================================================ */
@@ -1124,6 +1161,7 @@ document.addEventListener('DOMContentLoaded', () => {
   updateNavbar();
   initFilterChips();
   initSearch();
+  initSorting();
   initTechStackSearch(); // Initialize tech stack search
   syncProjectCounts();
   renderGrid();

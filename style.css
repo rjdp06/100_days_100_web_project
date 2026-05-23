@@ -1620,6 +1620,20 @@ body.light-mode .navbar {
     font-size: clamp(2.4rem, 12vw, 4.2rem);
   }
 
+  .hero-sub,
+  .hero-extra {
+    font-size: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .hero-actions {
+    margin-bottom: 2rem;
+  }
+
+  .hero-terminal {
+    opacity: 0.45;
+  }
+
   .stats-strip {
     gap: 0.5rem;
     padding: 0.5rem 1rem;

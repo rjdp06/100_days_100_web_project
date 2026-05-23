@@ -1366,7 +1366,17 @@ window.clearAllTechFilters = clearAllTechFilters;
     requestAnimationFrame(draw);
   }
 
-  window.addEventListener('resize', () => { resize(); init(); });
+  let resizeFrame = null;
+  const handleResize = () => {
+    if (resizeFrame) return;
+    resizeFrame = requestAnimationFrame(() => {
+      resizeFrame = null;
+      resize();
+      init();
+    });
+  };
+
+  window.addEventListener('resize', handleResize);
   resize(); init(); draw();
 })();
 

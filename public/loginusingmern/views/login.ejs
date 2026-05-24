@@ -2,22 +2,15 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta HTTP-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login page </title>
-    <link rel="stylesheet" href="login.css">
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login</title>
+  <link rel="stylesheet" href="login.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
 
 <body>
-    <div class="image"><iframe
-            src="https://lottie.host/embed/e9326b10-fe9a-446e-bc8d-56640e47e816/TeItgXRxNd.json"></iframe></div>
-    <form>
-        <!-- Headings for the form -->
-        <div class="headingsContainer">
-            <h3>Log In
-            </h3>
-        </div>
 
         <!-- The Wrapper contains all the inputs -->
         <div class="mainContainer">
@@ -61,6 +54,13 @@
             <!-- Sign up link -->
             <p class="register">Not a member? <a href="/signup">Sign Up here!</a></p>
 
+      <div class="form-body">
+
+        <!-- Username -->
+        <div class="field-group">
+          <label for="username">Username</label>
+          <input type="text" id="username" name="username" placeholder="Enter your username" autocomplete="username"
+            required>
         </div>
 
     </form>
@@ -188,7 +188,14 @@
 
         });
 
-    });
+        showToast(text, 'success');
+        setTimeout(() => window.location.href = '/home', 800);
+
+      } catch (err) {
+        console.error(err);
+        showToast('Something went wrong. Try again.', 'error');
+      }
+    }
 
     document.querySelectorAll('input').forEach(input => {
 

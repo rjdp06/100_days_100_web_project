@@ -13,26 +13,10 @@
   var scores    = { X: 0, O: 0, D: 0 };
   var particles = [];
   var animFrame = null;
-  /* Sound */
 
-  var muted = false;
-
-  var audioCtx =
-  new (
-  window.AudioContext ||
-  window.webkitAudioContext
-  )();
-
-  var muteBtn =
-  document.getElementById(
-  "mute-btn"
-  );
-
-  /* Custom player names */
-  var playerNames = {
-  X: "Player X",
-  O: "Player O"
-  };
+  /* ── Bot state ──────────────────────────*/
+  var vsBot   = false;
+  var botMark = "O";
 
   var boardEl  = document.getElementById("board");
   var gameEl   = document.getElementById("game");
@@ -48,82 +32,29 @@
   var winBtn   = document.getElementById("win-btn");
   var canvas   = document.getElementById("confetti-canvas");
   var ctx      = canvas.getContext("2d");
-  var winningLine =
-  document.getElementById(
-  "winning-line"
-  );
-  
-  var saveNamesBtn =
-  document.getElementById(
-  "save-names"
-  );
+  var startScreen = document.getElementById("start-screen");
+  var startBtn   = document.getElementById("start-btn");
 
-  var playerXInput =
-  document.getElementById(
-  "player-x-name"
-  );
-
-  var playerOInput =
-  document.getElementById(
-  "player-o-name"
-  );
-
-  var labelX =
-  document.getElementById(
-  "label-x"
-  );
-
-  var labelO =
-  document.getElementById(
-  "label-o"
-  );
-
-  /* ── Save custom names ───────────────── */
-  saveNamesBtn.addEventListener("click",function(){
-  playerNames.X = playerXInput.value.trim() || playerNames.X;
-  playerNames.O = playerOInput.value.trim() || playerNames.O;
-
-  /* Update turn text immediately */
-  statusEl.textContent = playerNames[current] + "'s turn!";
-
-  /* Update scoreboard labels */
-  labelX.textContent = playerNames.X + " Wins";
-  labelO.textContent = playerNames.O + " Wins";
-  }
-);
-
-
-  /* ── Play sound ───────────────── */
-  function playSound(type){
-    if(muted) return;
-    var osc =
-    audioCtx.createOscillator();
-    var gain =
-    audioCtx.createGain();
-    osc.connect(gain);
-    gain.connect(
-    audioCtx.destination
-  );
-
-  /* Different sounds */
-  if(type==="click"){
-  osc.frequency.value =350;
-  gain.gain.value =0.05;
-  }
-
-  if(type==="win"){
-  osc.frequency.value =700;
-  gain.gain.value =0.08;
-  }
-  
-  if(type==="draw"){
-  osc.frequency.value =200;
-  gain.gain.value =0.06;
-  }
-
-  osc.start();
-  osc.stop(audioCtx.currentTime + 0.12);
-  }
+  // ── Mode screen (injected) ─────────────
+  var modeScreen = document.createElement("div");
+  modeScreen.id = "mode-screen";
+  modeScreen.innerHTML = `
+    <h2 class="mode-title">Choose Mode</h2>
+    <p class="mode-sub">How do you want to play?</p>
+    <div class="mode-btns">
+      <button class="mode-btn" id="btn-2p">
+        <span class="mode-icon">👥</span>
+        <span class="mode-label">2 Players</span>
+        <span class="mode-desc">Play with a friend</span>
+      </button>
+      <button class="mode-btn" id="btn-bot">
+        <span class="mode-icon">🤖</span>
+        <span class="mode-label">vs Bot</span>
+        <span class="mode-desc">Challenge the AI</span>
+      </button>
+    </div>
+  `;
+  document.body.appendChild(modeScreen);
 
   /* ── Build board ──────────────────────── */
   function buildBoard() {
@@ -143,37 +74,47 @@
   /* ── Handle cell click ────────────────── */
   function handleClick(i) {
     if (gameOver || board[i]) return;
+    if (vsBot && current === botMark) return;   // block clicks on bot's turn
+
     board[i] = current;
-    playSound("click");
     buildBoard();
 
     var win = checkWin();
     if (win) {
       highlightWin(win);
-      playSound("win");
-      drawWinningLine(win);
       scores[current]++;
       updateScores();
+      setTimeout(function () { showWinOverlay(current); }, 320);
       gameOver = true;
-
-    /* Show winning line briefly */
-      setTimeout(function(){
-      winningLine.style.display = "none";
-      winningLine.style.transform ="none";
-
-    /* Remove green highlighted cells too */
-      var cells = boardEl.querySelectorAll(".cell");
-      cells.forEach(function(cell){
-      cell.classList.remove("win-cell");
-    });
-
-    /* NOW show popup */
-      showWinOverlay(current);
-    },800);
-
     } else if (board.every(Boolean)) {
       scores.D++;
-      playSound("draw");
+      updateScores();
+      setTimeout(showDrawOverlay, 200);
+      gameOver = true;
+    } else {
+      current = current === "X" ? "O" : "X";
+      setUI(current);
+      if (vsBot && current === botMark) setTimeout(doBotMove, 480);
+    }
+  }
+
+  /* ── Bot move ─────────────────────────── */
+  function doBotMove() {
+    if (gameOver) return;
+    var move = getBotMove();
+    if (move === -1) return;
+    board[move] = botMark;
+    buildBoard();
+
+    var win = checkWin();
+    if (win) {
+      highlightWin(win);
+      scores[botMark]++;
+      updateScores();
+      setTimeout(function () { showWinOverlay(botMark); }, 320);
+      gameOver = true;
+    } else if (board.every(Boolean)) {
+      scores.D++;
       updateScores();
       setTimeout(showDrawOverlay, 200);
       gameOver = true;
@@ -183,13 +124,60 @@
     }
   }
 
-  /* ── Check winner ─────────────────────── */
-  function checkWin() {
+  /* ── Pick best move (minimax) ─────────── */
+  function getBotMove() {
+    var bestScore = -Infinity;
+    var bestMove  = -1;
+    for (var i = 0; i < 9; i++) {
+      if (!board[i]) {
+        board[i] = botMark;
+        var score = minimax(board, 0, false);
+        board[i] = null;
+        if (score > bestScore) { bestScore = score; bestMove = i; }
+      }
+    }
+    return bestMove;
+  }
+
+  /* ── Minimax ──────────────────────────── */
+  function minimax(b, depth, isMax) {
+    var human  = botMark === "O" ? "X" : "O";
+    var winner = scanWinner(b);
+    if (winner === botMark) return 10 - depth;
+    if (winner === human)   return depth - 10;
+    if (b.every(Boolean))   return 0;
+
+    var best = isMax ? -Infinity : Infinity;
+    for (var i = 0; i < 9; i++) {
+      if (!b[i]) {
+        b[i] = isMax ? botMark : human;
+        var score = minimax(b, depth + 1, !isMax);
+        b[i] = null;
+        best = isMax ? Math.max(best, score) : Math.min(best, score);
+      }
+    }
+    return best;
+  }
+
+  /* ── Scan board for a winner ──────────── */
+  function scanWinner(b) {
     for (var i = 0; i < WIN_LINES.length; i++) {
       var l = WIN_LINES[i];
-      if (board[l[0]] && board[l[0]] === board[l[1]] && board[l[0]] === board[l[2]]) {
-        return l;
-      }
+      if (b[l[0]] && b[l[0]] === b[l[1]] && b[l[0]] === b[l[2]]) return b[l[0]];
+    }
+    return null;
+  }
+
+const checkWinner = () => {
+    for (const pattern of winPatterns) {
+        const [a, b, c] = pattern;
+        const pos1 = boardState[a];
+        const pos2 = boardState[b];
+        const pos3 = boardState[c];
+        if (pos1 && pos1 === pos2 && pos2 === pos3) {
+            setWinner(pos1, pattern);
+            return true;
+        }
     }
     return null;
   }
@@ -200,94 +188,14 @@
     line.forEach(function (i) { cells[i].classList.add("win-cell"); });
   }
 
-/* ── Draw winning line ───────────────── */
-  function drawWinningLine(line){
-  winningLine.style.display = "block";
-
-  /* Rows */
-  if(line.toString()==="0,1,2"){
-  winningLine.style.width="100%";
-  winningLine.style.height="6px";
-  winningLine.style.top="16%";
-  winningLine.style.left="0";
-  winningLine.style.transform="none";
-  }
-
-  else if(line.toString()==="3,4,5"){
-  winningLine.style.width="100%";
-  winningLine.style.height="6px";
-  winningLine.style.top="50%";
-  winningLine.style.left="0";
-  winningLine.style.transform="none";
-  }
-
-  else if(line.toString()==="6,7,8"){
-  winningLine.style.width="100%";
-  winningLine.style.height="6px";
-  winningLine.style.top="84%";
-  winningLine.style.left="0";
-  winningLine.style.transform="none";
-  }
-
-  /* Columns */
-  else if(line.toString()==="0,3,6"){
-  winningLine.style.width="6px";
-  winningLine.style.height="100%";
-  winningLine.style.left="16%";
-  winningLine.style.top="0";
-  }
-  else if(line.toString()==="1,4,7"){
-  winningLine.style.width="6px";
-  winningLine.style.height="100%";
-  winningLine.style.left="50%";
-  winningLine.style.top="0";
-  }
-
-  else if(line.toString()==="2,5,8"){
-  winningLine.style.width="6px";
-  winningLine.style.height="100%";
-  winningLine.style.left="84%";
-  winningLine.style.top="0";
-  }
-
-  /* Diagonal */
-  else if(line.toString()==="0,4,8"){
-  winningLine.style.width="140%";
-  winningLine.style.height="6px";
-  winningLine.style.left="-20%";
-  winningLine.style.top="50%";
-  winningLine.style.transform="rotate(45deg)";
-  }
-
-  else if(line.toString()==="2,4,6"){
-  winningLine.style.width="140%";
-  winningLine.style.height="6px";
-  winningLine.style.left="-20%";
-  winningLine.style.top="50%";
-  winningLine.style.transform="rotate(-45deg)";}
-  }
-
-  /* Sound toggle */
-  muteBtn.addEventListener("click",function(){
-  muted = !muted;
-  if(muted){
-    muteBtn.innerText = "🔇 Sound OFF";
-    muteBtn.classList.add("muted");
-  }
-
-  else{
-    muteBtn.innerText ="🔊 Sound ON";
-    muteBtn.classList.remove("muted");
-  }
-});
-
   /* ── Update turn UI + background ─────── */
   function setUI(player) {
     pillX.classList.toggle("active", player === "X");
     pillO.classList.toggle("active", player === "O");
     gameEl.className = player === "X" ? "turn-x" : "turn-o";
     statusEl.className = player === "X" ? "sx" : "so";
-    statusEl.textContent = playerNames[player] + "'s turn!";
+    var label = (vsBot && player === botMark) ? "Bot" : player;
+    statusEl.textContent = player ? label + "'s turn!" : "";
   }
 
   /* ── Update scoreboard ────────────────── */
@@ -299,11 +207,12 @@
 
   /* ── Win overlay ──────────────────────── */
   function showWinOverlay(player) {
-    winText.className  = player === "X" ? "col-x" : "col-o";
+    winText.className   = player === "X" ? "col-x" : "col-o";
     winText.textContent = "CONGRATULATIONS!";
-    winSub.textContent  = playerNames[player] + " wins the round!";
-    winBtn.className   = player === "X" ? "btn-x" : "btn-o";
-    overlay.className  = "show " + (player === "X" ? "ov-x" : "ov-o");
+    var label = (vsBot && player === botMark) ? "Bot" : "Player " + player;
+    winSub.textContent  = label + " wins the round!";
+    winBtn.className    = player === "X" ? "btn-x" : "btn-o";
+    overlay.className   = "show " + (player === "X" ? "ov-x" : "ov-o");
     launchConfetti(player);
   }
 
@@ -321,68 +230,160 @@
     board    = Array(9).fill(null);
     current  = "X";
     gameOver = false;
-    winningLine.style.display="none";
-    winningLine.style.transform="none";
     buildBoard();
     setUI("X");
     overlay.className = "";
     stopConfetti();
+    if (vsBot && current === botMark) setTimeout(doBotMove, 480);
   }
 
   /* ── Reset all ────────────────────────── */
   function resetAll() {
     scores = { X: 0, O: 0, D: 0 };
     updateScores();
-    nextRound();
-  }
+    turnO = true;
+    resetRound();
+    updateStatus("Scores reset. Ready to play");
+};
 
-  /* ── Confetti: player-colored ─────────── */
-  function launchConfetti(player) {
-    var g = document.getElementById("game");
-    canvas.width  = g.offsetWidth;
-    canvas.height = g.offsetHeight;
-    particles = [];
+const setModalState = (modal, isOpen) => {
+    if (!modal) {
+        return;
+    }
+    modal.classList.toggle("show", isOpen);
+    modal.setAttribute("aria-hidden", String(!isOpen));
+};
 
-    var xCols = ["#e05c00","#ff8833","#ffcc99","#ffffff","#ffaa55","#cc4400","#ff6600"];
-    var oCols = ["#0077cc","#55aaff","#99ccff","#ffffff","#003d7a","#33aaee","#0055aa"];
-    var cols  = player === "X" ? xCols : oCols;
+const showWinnerModal = (winner, isSetWin) => {
+    const winnerLabel = `Player ${winner}`;
+    winnerBadge.textContent = "Winner";
+    winnerTitle.textContent = isSetWin ? `${winnerLabel} wins the set!` : `${winnerLabel} wins the round!`;
+    winnerSubtitle.textContent = isSetWin
+        ? "Champion vibes. Reset scores to play a new set."
+        : "Great moves. Ready for the next round?";
+    setModalState(winnerModal, true);
+};
 
-    for (var i = 0; i < 120; i++) {
-      particles.push({
-        x:     canvas.width  * (0.15 + Math.random() * 0.7),
-        y:     canvas.height * (0.05 + Math.random() * 0.35),
-        vx:    (Math.random() - 0.5) * 5.5,
-        vy:    (Math.random() - 0.5) * 5.5,
-        r:     Math.random() * 5 + 2,
-        color: cols[Math.floor(Math.random() * cols.length)],
-        life:  1,
-        decay: Math.random() * 0.013 + 0.007
-      });
+const hideWinnerModal = () => {
+    setModalState(winnerModal, false);
+};
+
+const showStartModal = () => {
+    gameStarted = false;
+    setModalState(startModal, true);
+    boardLocked = true;
+    stopTurnTimer();
+};
+
+const hideStartModal = () => {
+    setModalState(startModal, false);
+};
+
+const updateHistory = () => {
+    historyList.innerHTML = "";
+    const recent = moveHistory.slice(-10);
+    recent.forEach((move, index) => {
+        const item = document.createElement("li");
+        const moveNumber = moveHistory.length - recent.length + index + 1;
+        item.textContent = `#${moveNumber} ${move.mark} to cell ${move.index + 1}`;
+        historyList.appendChild(item);
+    });
+};
+
+const clearHints = () => {
+    boxes.forEach((box) => box.classList.remove("hint"));
+};
+
+const syncTurnFromBoard = () => {
+    const countO = boardState.filter((cell) => cell === "O").length;
+    const countX = boardState.filter((cell) => cell === "X").length;
+    turnO = countO === countX;
+};
+
+const undoMove = () => {
+    if (!moveHistory.length) {
+        return;
     }
 
-    if (animFrame) cancelAnimationFrame(animFrame);
-    animateConfetti();
-  }
-
-  function animateConfetti() {
-    if (!particles.length) {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      return;
+    if (currentResult) {
+        if (currentResult.winner && currentResult.winner !== "D") {
+            scores[currentResult.winner] = Math.max(0, scores[currentResult.winner] - 1);
+        }
+        if (currentResult.winner === "D") {
+            scores.D = Math.max(0, scores.D - 1);
+        }
+        currentResult = null;
+        updateScores();
     }
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    particles = particles.filter(function (p) { return p.life > 0; });
-    particles.forEach(function (p) {
-      p.x  += p.vx;
-      p.y  += p.vy;
-      p.vy += 0.07;
-      p.life -= p.decay;
-      ctx.save();
-      ctx.globalAlpha = Math.max(0, p.life);
-      ctx.fillStyle   = p.color;
-      ctx.beginPath();
-      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.restore();
+
+    const steps = mode === "pvp" ? 1 : 2;
+    for (let i = 0; i < steps; i += 1) {
+        const last = moveHistory.pop();
+        if (!last) {
+            break;
+        }
+        const box = boxes[last.index];
+        boardState[last.index] = "";
+        box.textContent = "";
+        box.disabled = false;
+        box.classList.remove("win", "mark-o", "mark-x");
+    }
+
+    boardLocked = false;
+    boxes.forEach((box) => box.classList.remove("win"));
+    hideWinLine();
+    clearHints();
+    syncTurnFromBoard();
+    updateHistory();
+    updateStatus("Undo applied");
+    triggerCpuMove();
+};
+
+// Run the CPU move with a short delay for pacing.
+const triggerCpuMove = () => {
+    if (mode === "pvp" || boardLocked || turnO) {
+        return;
+    }
+    const available = getAvailableMoves(boardState);
+    if (!available.length) {
+        return;
+    }
+    updateStatus("CPU is thinking...");
+    boardLocked = true;
+    boardEl.classList.add("thinking");
+    setTimeout(() => {
+        let bestMove = null;
+        if (mode === "cpu-easy") {
+            bestMove = randomMove(available);
+        } else if (mode === "cpu-medium") {
+            bestMove = Math.random() < 0.6 ? bestMoveFor(boardState, "X") : randomMove(available);
+        } else {
+            bestMove = bestMoveFor(boardState, "X");
+        }
+        boardLocked = false;
+        boardEl.classList.remove("thinking");
+        placeMark(bestMove, "X", true);
+    }, 450);
+};
+
+const getAvailableMoves = (state) => state
+    .map((cell, index) => (cell ? null : index))
+    .filter((value) => value !== null);
+
+const randomMove = (moves) => moves[Math.floor(Math.random() * moves.length)];
+
+const bestMoveFor = (state, player) => {
+    let bestScore = -Infinity;
+    let move = null;
+    const opponent = player === "O" ? "X" : "O";
+    getAvailableMoves(state).forEach((index) => {
+        const next = [...state];
+        next[index] = player;
+        const score = minimax(next, false, player, opponent, 0);
+        if (score > bestScore) {
+            bestScore = score;
+            move = index;
+        }
     });
     animFrame = requestAnimationFrame(animateConfetti);
   }
@@ -398,6 +399,36 @@
   document.getElementById("btn-reset").addEventListener("click", resetAll);
   document.getElementById("btn-restart").addEventListener("click", nextRound);
   document.getElementById("win-btn").addEventListener("click", nextRound);
+
+  /* ── Start → mode screen ──────────────── */
+  startBtn.addEventListener("click", function () {
+    startScreen.classList.add("hide-screen");
+    setTimeout(function () {
+      startScreen.style.display = "none";
+      modeScreen.classList.add("show");
+    }, 600);
+  });
+
+  document.getElementById("btn-2p").addEventListener("click", function () {
+    vsBot = false;
+    launchGame();
+  });
+
+  document.getElementById("btn-bot").addEventListener("click", function () {
+    vsBot = true;
+    launchGame();
+  });
+
+  /* ── Mode screen → game ───────────────── */
+  function launchGame() {
+    modeScreen.classList.remove("show");
+    modeScreen.classList.add("hide");
+    setTimeout(function () {
+      modeScreen.style.display = "none";
+      gameEl.classList.remove("hidden");
+      gameEl.classList.add("show-game");
+    }, 400);
+  }
 
   /* ── Init ─────────────────────────────── */
   buildBoard();

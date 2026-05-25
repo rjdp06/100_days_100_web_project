@@ -31,9 +31,13 @@ jobs:
               return;
             }
 
+            let startIssue = fromIssue;
+            let endIssue = toIssue;
+
             if (fromIssue > toIssue) {
-              core.setFailed("from_issue must be less than or equal to to_issue.");
-              return;
+              startIssue = toIssue;
+              endIssue = fromIssue;
+              core.info(`Received reversed range (${fromIssue} -> ${toIssue}); processing as ${startIssue} -> ${endIssue}.`);
             }
 
             const approvedLabel = "gssoc:approved";
@@ -57,7 +61,7 @@ jobs:
               }
             }
 
-            for (let issueNumber = fromIssue; issueNumber <= toIssue; issueNumber++) {
+            for (let issueNumber = startIssue; issueNumber <= endIssue; issueNumber++) {
               try {
                 const issueResponse = await github.rest.issues.get({
                   owner: context.repo.owner,

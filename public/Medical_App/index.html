@@ -13,31 +13,22 @@
     <div class="hero-content">
         <h1>🏥 MedConsult Dashboard</h1>
         <p>Connecting Local Doctors with Specialists</p>
-    </div>
-</header>
+    </header>
+    <main>
+        <section id="consultation-form">
+            <h2 >Request a Consultation</h2>
+            <form id="requestForm">
+                <label for="patientName">Patient's Name:</label>
+                <input type="text" id="patientName" name="patientName" required placeholder="Patient's Name">
+                <label for="doctorName">Doctor's Name:</label>
+                <input type="text" id="doctorName" name="doctorName" required placeholder="Doctor's Name">
 
-<main class="dashboard">
+                <label for="patientCondition">Patient's Condition:</label>
+                <textarea id="patientCondition" name="patientCondition"  placeholder="Condition" required></textarea>
 
-    <section class="card">
-        <h2>📋 Request Consultation</h2>
-
-        <form id="requestForm">
-
-            <label for="doctorName">Doctor Name</label>
-            <input type="text" id="doctorName" placeholder="Enter doctor name" required>
-
-            <label for="patientCondition">Patient Condition</label>
-            <textarea id="patientCondition" placeholder="Describe patient condition" required></textarea>
-
-            <label for="specialistSearch">Specialist Needed</label>
-
-            <input type="text"
-                   id="specialistSearch"
-                   placeholder="Search specialist">
-
-            <select id="specialistType">
-                <option value="">Select Specialist</option>
-            </select>
+                <label for="specialistType">Specialist Needed:</label>
+                <input type="text" id="specialistSearch" placeholder="Search Specialist...">
+                <select id="specialistType" name="specialistType" required></select>
 
             <button type="submit" class="primary-btn">
                 Submit Consultation

@@ -839,7 +839,7 @@
     "AstronomyDashboard",
     "./public/AstronomyDashboard/astro.html",
     ["html", "css", "javascript", "api-javascript"],
-    "Advanced"
+    "advanced"
   ],
   [
     "Day 123",
@@ -1004,7 +1004,7 @@
   ],
   [
     "Day 146",
-    "Data Sructures Visualizer",
+    "Data Structures Visualizer",
     "./public/Data Structures Visualizer/index.html",
     ["visualizer"],
     "intermediate"
@@ -1152,7 +1152,7 @@
   [
     "Day 167",
     "scam-sms-detector",
-    "/public/scam-sms-detector/index.html",
+    "./public/scam-sms-detector/index.html",
     ["tool", "api", "javascript"],
     "intermediate"
   ],

@@ -70,17 +70,14 @@ let projectsPromise = null;
 function loadProjects() {
   if (!projectsPromise) {
     projectsPromise = (async () => {
-      try {
-        const isRoot = !window.location.pathname.includes('/contributors/');
-        const base = isRoot ? '' : '../';
-        const response = await fetch(`${base}public/projects.json`);
-        if (!response.ok) {
-          throw new Error(`Failed to load projects: ${response.statusText}`);
-        }
-        PROJECTS = await response.json();
-      } catch (error) {
-        console.error('Error fetching projects:', error);
+      const isRoot = !window.location.pathname.includes('/contributors/');
+      const base = isRoot ? '' : '../';
+      const projectsUrl = new URL(`${base}public/projects.json`, window.location.href).toString();
+      const response = await fetch(projectsUrl);
+      if (!response.ok) {
+        throw new Error(`Failed to load projects: ${response.statusText}`);
       }
+      PROJECTS = await response.json();
     })();
   }
   return projectsPromise;
@@ -1690,17 +1687,25 @@ document.addEventListener('DOMContentLoaded', async () => {
   initSorting();
   initTechStackSearch();
 
-  // Await the projects to be fetched
-  await loadProjects();
+  try {
+    // Await the projects to be fetched
+    await loadProjects();
 
-  syncProjectCounts();
-  fetchRepoStats();
-  initScrollBtn();
+    syncProjectCounts();
+    fetchRepoStats();
+    initScrollBtn();
 
-  if (hasProjectGrid()) {
-    renderGrid();
-    renderBookmarks();
-    renderRecentProjects();
+    if (hasProjectGrid()) {
+      renderGrid();
+      renderBookmarks();
+      renderRecentProjects();
+    }
+  } catch (error) {
+    console.error('Failed to load projects:', error);
+    const grid = document.getElementById('projectGrid');
+    if (grid) {
+      grid.innerHTML = '<div class="error-message" style="grid-column: 1/-1; text-align: center; padding: 2rem; color: var(--text-muted);">Failed to load projects. Please try refreshing the page.</div>';
+    }
   }
 });
 
@@ -2006,8 +2011,12 @@ function applyFilters(search, category) {
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
-  await loadProjects();
-  restoreStateFromURL();
+  try {
+    await loadProjects();
+    restoreStateFromURL();
+  } catch (error) {
+    console.error('Failed to restore state or load projects:', error);
+  }
   const searchInput = document.getElementById('search') ||
     document.querySelector('input[type="text"]') ||
     document.querySelector('.search-input');

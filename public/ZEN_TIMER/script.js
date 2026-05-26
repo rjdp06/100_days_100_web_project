@@ -25,6 +25,10 @@ let currentMode = 'work';
 let sessionsToday = 0;
 let lastSessionDate = null;
 
+// Track real clock time to prevent timer drift on inactive tabs
+let timerStartTime = null;   // Date.now() when timer last started/resumed
+let timerStartLeft = null;   // timeLeft value when timer last started/resumed
+
 const timeDisplay = document.getElementById('timeDisplay');
 const startBtn = document.getElementById('startBtn');
 const resetBtn = document.getElementById('resetBtn');
@@ -179,20 +183,33 @@ function startTimer() {
         pauseTimer();
         return;
     }
-    
+
     isRunning = true;
     startBtn.textContent = 'Pause';
     startBtn.style.background = '#e67e22';
-    
+
+    // Record the real clock time and remaining seconds at start/resume
+    timerStartTime = Date.now();
+    timerStartLeft = timeLeft;
+
+    // Check twice per second for better accuracy
     timer = setInterval(() => {
-        timeLeft--;
+        // Calculate real elapsed seconds using actual clock — not tick count
+        const elapsed = Math.floor((Date.now() - timerStartTime) / 1000);
+        timeLeft = timerStartLeft - elapsed;
+
+        // Clamp to 0 so it never goes negative
+        if (timeLeft <= 0) {
+            timeLeft = 0;
+            updateDisplay();
+            updateProgress();
+            completeSession();
+            return;
+        }
+
         updateDisplay();
         updateProgress();
-        
-        if (timeLeft <= 0) {
-            completeSession();
-        }
-    }, 1000);
+    }, 500);
 }
 
 function pauseTimer() {
@@ -254,7 +271,21 @@ function setMode(mode) {
 }
 
 startBtn.addEventListener('click', startTimer);
-resetBtn.addEventListener('click', resetTimer);
+resetBtn.addEventListener('click', resetTimer); 
+// Sync timer when user returns to tab after it was hidden
+// This recalculates timeLeft based on real elapsed time
+document.addEventListener('visibilitychange', () => {
+    if (!document.hidden && isRunning) {
+        const elapsed = Math.floor((Date.now() - timerStartTime) / 1000);
+        timeLeft = timerStartLeft - elapsed;
+        if (timeLeft <= 0) {
+            timeLeft = 0;
+            completeSession();
+        }
+        updateDisplay();
+        updateProgress();
+    }
+});
 
 document.querySelectorAll('.mode-btn').forEach(btn => {
     btn.addEventListener('click', () => {

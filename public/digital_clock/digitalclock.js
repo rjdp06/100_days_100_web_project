@@ -316,7 +316,16 @@ function setTheme(theme) {
   );
 }
 
+ function toggleDarkMode() {
+    const isLight = document.body.classList.toggle('light-mode');
+    document.querySelector('.dark-mode-btn').textContent = isLight ? '🌙 Dark Mode' : '☀️ Light Mode';
+    localStorage.setItem('lightMode', isLight);
+  }
 
+  if (localStorage.getItem('lightMode') === 'true') {
+    document.body.classList.add('light-mode');
+    document.querySelector('.dark-mode-btn').textContent = '🌙 Dark Mode';
+  } 
 function clearAlarm() {
 
   localStorage.removeItem(

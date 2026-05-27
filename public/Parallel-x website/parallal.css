@@ -10,6 +10,22 @@
   --white:        #ffffff;
   --text-dark:    #0d1f1a;
   --shadow-green: rgba(53,147,129,0.35);
+  
+  /* Themeable variables */
+  --page-bg: var(--cream);
+  --page-text: var(--text-dark);
+  --header-bg: rgba(1,57,47,0.5);
+  --card-bg: var(--white);
+  --muted: rgba(255,255,255,0.6);
+}
+
+/* Dark theme overrides */
+:root[data-theme="dark"], [data-theme="dark"] {
+  --page-bg: #0b1410;
+  --page-text: #e6f6ef;
+  --header-bg: rgba(3,42,35,0.9);
+  --card-bg: #081312;
+  --muted: rgba(255,255,255,0.5);
 }
 
 *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
@@ -18,8 +34,8 @@ html { scroll-behavior: smooth; font-size: 16px; }
 
 body {
   font-family: 'DM Sans', sans-serif;
-  background: #f5f2eb;
-  color: var(--text-dark);
+    background: var(--page-bg);
+    color: var(--page-text);
   overflow-x: hidden;
 }
 
@@ -36,6 +52,26 @@ body {
 .cursor-dot  { width:8px; height:8px; background:var(--green-accent); transform:translate(-50%,-50%); }
 .cursor-ring { width:36px; height:36px; border:2px solid var(--green-accent); transform:translate(-50%,-50%); opacity:.5; transition:all 0.25s ease; }
 
+/* Back button styling to avoid collisions with header */
+.project-back-button {
+  display: none;
+  position: absolute;
+  left: 18px;
+  top: 50%;
+  transform: translateY(-50%);
+  padding: 6px 10px;
+  font-size: 0.95rem;
+  border-radius: 8px;
+  background: linear-gradient(90deg, rgba(124,99,255,0.14), rgba(79,141,255,0.10));
+  color: #fff;
+  text-decoration: none;
+  z-index: 10001;
+  font-weight: 700;
+  font-family: Inter, system-ui, sans-serif;
+  box-shadow: 0 8px 20px rgba(12,18,40,0.35);
+}
+.project-back-button:hover{ opacity:0.95 }
+
 /* ══════════════════════════════════════
    HEADER / NAV
 ══════════════════════════════════════ */
@@ -47,7 +83,7 @@ header {
   justify-content: space-between;
   align-items: center;
   padding: 20px 5%;
-  background: rgba(1, 57, 47, 0.5);
+    background: var(--header-bg);
   backdrop-filter: blur(14px);
   transition: background 0.4s, padding 0.3s;
 }
@@ -82,9 +118,20 @@ nav ul li a {
   letter-spacing: 0.5px;
 }
 nav ul li a:hover {
-  background: rgba(255,255,255,0.15);
-  border-color: rgba(255,255,255,0.3);
+  background: rgba(255,255,255,0.12);
+  border-color: rgba(255,255,255,0.18);
   color: var(--white);
+}
+
+/* Theme toggle button */
+.theme-toggle {
+  background: transparent;
+  border: 1px solid rgba(255,255,255,0.12);
+  color: var(--white);
+  padding: 8px 10px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 0.95rem;
 }
 
 /* hamburger */
@@ -469,6 +516,12 @@ header{
     text-align: center;
 }
 
+  /* Show back button on small screens only */
+  .project-back-button { display:block; position:absolute; left:12px; top:50%; transform:translateY(-50%); }
+
+  /* ensure header leaves space for back button on small screens */
+  header{ padding-left: 60px; }
+
 .name{
     font-size: 1.5rem;
 }
@@ -482,6 +535,9 @@ nav ul li{
     padding: 6px 12px;
     font-size: 0.9rem;
 }
+
+/* prevent header content from overlapping the fixed back button on small screens */
+header{ padding-left: 80px; }
 
 .parallal{
     height: 90vh;

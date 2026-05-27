@@ -166,9 +166,14 @@ body::after {
   animation: noiseShift 0.8s steps(2) infinite;
 }
 
-body > *:not(.ambient):not(.noise-layer):not(.cursor-ring) {
+body > *:not(.ambient):not(.noise-layer):not(.cursor-ring):not(header):not(.hero) {
   position: relative;
   z-index: 1;
+}
+
+body > header {
+  position: relative;
+  z-index: 10;
 }
 
 .cursor-ring {
@@ -221,10 +226,10 @@ body > *:not(.ambient):not(.noise-layer):not(.cursor-ring) {
    NAVBAR & RESPONSIVE DRAWER ARCHITECTURE
    ============================================================ */
 .navbar {
+  isolation: isolate;
   position: fixed;
   top: 0;
   left: 0;
-  right: 0;
   width: 100%;
   z-index: 100001;
   background: rgba(11, 13, 15, 0.95);
@@ -392,8 +397,30 @@ body.light-mode .navbar {
     height: auto;
   }
 
+  .navbar-brand {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .brand-copy {
+    overflow: hidden;
+  }
+
+  .brand-copy strong {
+    font-size: 0.75rem;
+    line-height: 1.2;
+    display: block;
+    white-space: normal;
+  }
+
+  .brand-kicker {
+    font-size: 0.55rem;
+  }
+
   .menu-toggle {
     display: block;
+    flex-shrink: 0;
+    margin-left: 0.5rem;
   }
 
   .menu-toggle i {
@@ -439,6 +466,12 @@ body.light-mode .navbar {
     text-align: center;
     width: 100%;
   }
+
+  .stats-strip {
+    flex-wrap: wrap;
+    justify-content: center;
+    padding: 1rem;
+  }
 }
 
 /* ============================================================
@@ -454,6 +487,7 @@ body.light-mode .navbar {
   justify-content: center;
   padding-top: 60px;
   position: relative;
+  z-index: 0;
   overflow: hidden;
   isolation: isolate;
 }
@@ -2538,6 +2572,17 @@ body::after {
     transform:translateY(0);
 
     margin-top:16px;
+}
+
+.clear-filters-btn:hover {
+  background: var(--accent) !important;
+  color: #ffffff !important;
+  transform: scale(1.03);
+  box-shadow: 0 4px 15px rgba(59, 130, 246, 0.25);
+}
+
+.clear-filters-btn:active {
+  transform: scale(0.97);
 }
 
 /* Navbar Container */

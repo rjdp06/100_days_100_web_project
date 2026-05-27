@@ -166,12 +166,12 @@ body::after {
   animation: noiseShift 0.8s steps(2) infinite;
 }
 
-body > *:not(.ambient):not(.noise-layer):not(.cursor-ring) {
+body > *:not(.ambient):not(.noise-layer):not(.cursor-ring):not(header) {
   position: relative;
   z-index: 1;
 }
 
-header {
+body > header {
   position: relative;
   z-index: 100002;
 }

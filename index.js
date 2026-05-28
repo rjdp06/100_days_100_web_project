@@ -1237,24 +1237,20 @@ function initTechStackSearch() {
 
   if (!input) return;
 
-  let debounceTimer;
+  // Use the shared debounce utility instead of a manual inline timer
+  input.addEventListener('input', debounce((e) => {
+    const value = e.target.value.trim().toLowerCase();
 
-  input.addEventListener('input', (e) => {
-    clearTimeout(debounceTimer);
-    debounceTimer = setTimeout(() => {
-      const value = e.target.value.trim().toLowerCase();
-
-      if (value) {
-        const techs = value.split(/[,\s]+/).filter(t => t.length > 0);
-        techStackFilters = [...new Set(techs)];
-        updateTechFilterDisplay();
-        currentPage = 1;
-        renderGrid();
-      } else {
-        clearAllTechFilters();
-      }
-    }, 300);
-  });
+    if (value) {
+      const techs = value.split(/[,\s]+/).filter(t => t.length > 0);
+      techStackFilters = [...new Set(techs)];
+      updateTechFilterDisplay();
+      currentPage = 1;
+      renderGrid();
+    } else {
+      clearAllTechFilters();
+    }
+  }, 300));
 
   if (clearBtn) {
     clearBtn.addEventListener('click', () => {
@@ -1910,11 +1906,12 @@ document.addEventListener('DOMContentLoaded', async () => {
     document.querySelector('input[type="text"]') ||
     document.querySelector('.search-input');
   if (searchInput) {
-    searchInput.addEventListener('input', () => {
+    // Debounced so rapid typing doesn't trigger a renderGrid() on every keystroke
+    searchInput.addEventListener('input', debounce(() => {
       const { category } = getQueryParams();
       updateURL(searchInput.value, category);
       applyFilters(searchInput.value, category);
-    });
+    }, 200));
   }
   const categoryFilter = document.getElementById('category');
   if (categoryFilter) {

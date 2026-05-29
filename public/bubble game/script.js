@@ -237,23 +237,47 @@ function drawShooter() {
   const dy = Math.sin(clampedAngle);
 
   // --- Dotted aim line with wall bounce ---
-  ctx.save();
-  ctx.setLineDash([5, 9]);
-  ctx.strokeStyle = 'rgba(0,245,255,0.28)';
-  ctx.lineWidth = 1.5;
-  ctx.beginPath();
-  let tx = SHOOTER_X, ty = SHOOTER_Y;
-  let tvx = dx, tvy = dy;
-  ctx.moveTo(tx, ty);
-  for (let i = 0; i < 400; i++) {
-    tx += tvx * 3; ty += tvy * 3;
-    if (tx < R)     { tx = R;     tvx =  Math.abs(tvx); }
-    if (tx > W - R) { tx = W - R; tvx = -Math.abs(tvx); }
-    if (ty < 0) break;
+ctx.save();
+ctx.setLineDash([5, 9]);
+ctx.strokeStyle = 'rgba(0,245,255,0.28)';
+ctx.lineWidth = 1.5;
+
+ctx.beginPath();
+
+let tx = SHOOTER_X;
+let ty = SHOOTER_Y;
+let tvx = dx;
+let tvy = dy;
+
+ctx.moveTo(tx, ty);
+
+for (let i = 0; i < 400; i++) {
+  tx += tvx * 3;
+  ty += tvy * 3;
+
+  // bounce left wall
+  if (tx < R) {
+    tx = R;
+    tvx *= -1;
+    ctx.lineTo(tx, ty);
+    ctx.moveTo(tx, ty);
   }
+
+  // bounce right wall
+  if (tx > W - R) {
+    tx = W - R;
+    tvx *= -1;
+    ctx.lineTo(tx, ty);
+    ctx.moveTo(tx, ty);
+  }
+
   ctx.lineTo(tx, ty);
-  ctx.stroke();
-  ctx.restore();
+
+  if (ty < 0) break;
+}
+
+ctx.stroke();
+ctx.restore();
 
   // --- Shooter base (circle platform) ---
   ctx.save();
